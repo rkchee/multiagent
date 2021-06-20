@@ -39,7 +39,7 @@ if __name__ == "__main__":
     policies = {agent: (None, obs_space, act_spc, {}) for agent in env.agents}
 
     tune.run(
-        "DQN",
+        "APEX_DDPG",
         stop={"episodes_total": 60000},
         checkpoint_freq=10,
         config={
