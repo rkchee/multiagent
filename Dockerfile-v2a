@@ -1,0 +1,101 @@
+FROM nvcr.io/nvidia/tensorflow:19.12-tf2-py3
+MAINTAINER Roger Ng MD <rkchee@gmail.com>
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+RUN apt-get update && \
+      apt-get -y install sudo
+RUN apt-get install -y --no-install-recommends apt-utils
+
+ENV PATH /root/.pyenv/shims:/root/.pyenv/bin:$PATH
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN sudo apt-get install -y make curl build-essential libssl-dev zlib1g-dev
+RUN sudo apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+# RUN sudo apt-get install -y libffi-dev
+
+
+RUN set -x \
+    && pythonVersions='3.7.9' \
+    && buildDeps='ca-certificates git libjpeg-dev' \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y $buildDeps \
+    && curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash \
+    && echo $pythonVersions | xargs -n 1 pyenv install \
+    && apt-get purge -y --auto-remove $buildDeps \
+    && rm -rf /var/lib/apt/lists/*
+
+# ENV HOME  /home/user
+# ENV PYENV_ROOT $HOME/.pyenv
+# ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+# RUN echo 'export PYENV_ROOT="$HOME/.pyenv"' >> .bashrc
+# RUN echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> .bashrc
+# RUN echo 'eval "$(pyenv init -)"' >> .bashrc
+
+CMD bash
+
+# ray for python version 3.6
+# RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.9.0.dev0-cp36-cp36m-manylinux1_x86_64.whl
+
+# ray for python version 3.7
+RUN pyenv global 3.7.9
+# RUN sudo pip install --upgrade pip
+
+# RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.0.0-cp37-cp37m-manylinux1_x86_64.whl
+RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.9.0.dev0-cp37-cp37m-manylinux1_x86_64.whl
+
+
+RUN pip install ray[rllib]
+RUN pip install setproctitle ray[debug] requests psutil gputil
+RUN pip install pandas 
+
+RUN sudo apt-get update
+RUN sudo apt install -y --no-install-recommends ffmpeg
+RUN pip install cryptography
+RUN pip install google-api-python-client==1.7.8
+
+RUN sudo apt-get install -y --no-install-recommends rsync
+RUN sudo apt install -y --no-install-recommends screen
+
+RUN sudo apt-get install -y --no-install-recommends ca-certificates
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends google-cloud-sdk
+
+RUN sudo apt-get install -y --no-install-recommends kubectl
+
+RUN sudo apt-get update
+RUN sudo apt-get install -y --no-install-recommends libsm6 libxext6 libxrender-dev
+RUN pip install opencv-python
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+RUN pip install flask
+RUN pip install numpy
+RUN pip install requests
+RUN pip install transformers
+RUN pip install pygments
+RUN pip install uvicorn
+RUN pip install blist
+RUN pip install scikit-learn
+# RUN git clone https://github.com/nth-opinion/nxtopinion.git
+
+# RUN sudo pip install --upgrade pip
+# RUN sudo pip install --upgrade virtualenv
+
+# RUN apt-get update
+# RUN sudo apt-get install -y make build-essential libssl-dev zlib1g-dev
+# RUN sudo apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev
+# RUN sudo apt-get install -y libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+
+# RUN curl -k http://pyenv.run | bash
+
+RUN pip install ray[tune] ray[serve] 
+RUN pip install tensorflow
+RUN pip install -U requests
+
+RUN pip install pipenv

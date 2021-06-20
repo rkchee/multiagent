@@ -1,0 +1,8 @@
+{
+  "framework": "tf",
+  "model": {
+    "custom_model": "my_model",
+    "custom_model_config": {}
+  },
+  "num_workers": 6
+}
