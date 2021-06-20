@@ -47,7 +47,7 @@ if __name__ == "__main__":
             "env": "waterworld",
             # General
             "framework": "tf",
-            # "num_gpus": 1,
+            "num_gpus": 1,
             "num_workers": 2,
             "num_cpus_per_worker": 32,
             # Method specific
