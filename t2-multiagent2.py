@@ -50,9 +50,9 @@ if __name__ == "__main__":
 
     config={
         "log_level": "WARN",
-        "num_workers": 3,
+        "num_workers": 80,
         "num_cpus_for_driver": 1,
-        "num_cpus_per_worker": 1,
+        "num_cpus_per_worker": 4,
         "lr": 5e-3,
         "model":{"fcnet_hiddens": [8, 8]},
         "multiagent": {
