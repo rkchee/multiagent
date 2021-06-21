@@ -28,7 +28,7 @@ class IrrigationEnv(MultiAgentEnv):
 
             obs[i], rew[i], done[i], info[i] = np.array([1]), 0, True, {}
         done["__all__"] = True
-        pdb.set_trace()
+        # pdb.set_trace()
         return obs, rew, done, info
 
 if __name__ == "__main__":
@@ -50,9 +50,9 @@ if __name__ == "__main__":
 
     config={
         "log_level": "WARN",
-        "num_workers": 80,
+        "num_workers": 32,
         "num_cpus_for_driver": 1,
-        "num_cpus_per_worker": 4,
+        "num_cpus_per_worker": 2,
         "lr": 5e-3,
         "model":{"fcnet_hiddens": [8, 8]},
         "multiagent": {
