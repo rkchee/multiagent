@@ -7,6 +7,9 @@ from ray import tune
 import numpy as np
 import pdb
 
+ray_head_ip =os.environ.get('RAY_HEAD_SERVICE_HOST')
+ray_redis_port = os.environ.get('RAY_HEAD_SERVICE_PORT_REDIS_PRIMARY')
+
 class IrrigationEnv(MultiAgentEnv):
     def __init__(self, return_agent_actions = False, part=False):
         self.num_agents = 400
@@ -50,9 +53,9 @@ if __name__ == "__main__":
 
     config={
         "log_level": "WARN",
-        "num_workers": 30,
+        "num_workers": 76,
         "num_cpus_for_driver": 1,
-        "num_cpus_per_worker": 2,
+        "num_cpus_per_worker": 4,
         "lr": 5e-3,
         "model":{"fcnet_hiddens": [8, 8]},
         "multiagent": {
@@ -74,8 +77,9 @@ if __name__ == "__main__":
             "config": config,
     }
 
-ray.init()
+# ray.init()
 # pdb.set_trace()
+ray.init(address=ray_head_ip + ":" + ray_redis_port)
 tune.run(**exp_dict)
     
 
