@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     config={
         "log_level": "WARN",
-        "num_workers": 32,
+        "num_workers": 30,
         "num_cpus_for_driver": 1,
         "num_cpus_per_worker": 2,
         "lr": 5e-3,
