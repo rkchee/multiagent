@@ -5,12 +5,15 @@ from ray.rllib.env import MultiAgentEnv
 import gym
 from ray import tune
 import numpy as np
+import pdb
 
 class IrrigationEnv(MultiAgentEnv):
     def __init__(self, return_agent_actions = False, part=False):
-        self.num_agents = 5
+        self.num_agents = 400
+        self.reward = 0
         self.observation_space = gym.spaces.Box(low=200, high=800, shape=(1,))
         self.action_space = gym.spaces.Box(low=0, high=1, shape=(1,))
+        self.water = np.random.uniform(200,800)
 
     def reset(self):
         obs = {}
@@ -18,42 +21,15 @@ class IrrigationEnv(MultiAgentEnv):
         for i in range(self.num_agents):
             obs[i] = np.array([self.water])
         return obs
-
-    def cal_rewards(self, action_dict):
-        self.curr_water = self.water
-        reward = 0
-        for i in range(self.num_agents):
-            water_demanded = self.water*action_dict[i][0]
-            if self.curr_water == 0:
-                # No water is left in stream
-                reward -= water_demanded*100 # Penalty
-            elif self.curr_water - water_demanded<0:
-                # Water in stream is less than water demanded, withdraw all left
-                water_needed = water_demanded - self.curr_water
-                water_withdrawn = self.curr_water
-                self.curr_water = 0
-                reward += -water_withdrawn**2 + 200*water_withdrawn
-                reward -= water_needed*100 # Penalty
-            else:
-                # Water in stream is more than water demanded, withdraw water demanded
-                self.curr_water -= water_demanded
-                water_withdrawn = water_demanded
-                reward += -water_withdrawn**2 + 200*water_withdrawn
-
-        return reward
-
+    
     def step(self, action_dict):
         obs, rew, done, info = {}, {}, {}, {}
-
-        reward = self.cal_rewards(action_dict)
-
         for i in range(self.num_agents):
 
-            obs[i], rew[i], done[i], info[i] = np.array([self.curr_water]), reward, True, {}
-
+            obs[i], rew[i], done[i], info[i] = np.array([1]), 0, True, {}
         done["__all__"] = True
+        pdb.set_trace()
         return obs, rew, done, info
-
 
 if __name__ == "__main__":
     def env_creator(_):
@@ -72,7 +48,6 @@ if __name__ == "__main__":
     def policy_mapping_fn(agent_id):
             return 'agent-' + str(agent_id)
 
-
     config={
         "log_level": "WARN",
         "num_workers": 3,
@@ -87,6 +62,7 @@ if __name__ == "__main__":
         "env": "IrrigationEnv"
 
     }
+
     exp_name = 'more_corns_yey'
     exp_dict = {
             'name': exp_name,
@@ -97,5 +73,11 @@ if __name__ == "__main__":
             'checkpoint_freq': 20,
             "config": config,
     }
+
 ray.init()
+# pdb.set_trace()
 tune.run(**exp_dict)
+    
+
+
+
